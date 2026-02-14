@@ -33,6 +33,23 @@ export default function CaseCommander() {
     catch (e) { console.error("Recon failed"); }
   };
 
+  const harvestFunds = async () => {
+    setIsLoading(true);
+    addLog(`HARVESTING: Сбор ресурсов со спящих юнитов...`);
+    try {
+      const resp = await fetch('/api/harvest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ unitCount })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        addLog(`SUCCESS: Балансы активных ${unitCount} юнитов пополнены.`);
+      }
+    } catch (e) { addLog("Harvest protocol failed."); }
+    finally { setIsLoading(false); fetchBalances(); }
+  };
+
   useEffect(() => {
     fetchBalances();
     fetchRecon();
