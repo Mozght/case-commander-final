@@ -162,14 +162,16 @@ export default function CaseCommander() {
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(id => (
                 <div key={id} className={`bg-black/50 p-4 rounded-2xl border transition-all ${id > unitCount ? 'opacity-20 grayscale border-slate-900' : 'opacity-100 border-blue-900/30 shadow-[0_0_15px_rgba(59,130,246,0.05)]'}`}>
                   <div className="text-[9px] text-slate-600 mb-2 font-bold uppercase tracking-tighter">Unit_{id}</div>
-                  <div className="text-[14px] font-black text-white">{balances[id]?.toFixed(5) || \"0.00000\"}</div>
-                  <div className=\"mt-3 w-full h-[2px] bg-slate-900 rounded-full overflow-hidden\"><div className=\"h-full bg-blue-600\" style={{ width: `${Math.min((balances[id] || 0) * 1000, 100)}%` }}></div></div>
+                  <div className="text-[14px] font-black text-white">{balances[id]?.toFixed(5) || "0.00000"}</div>
+                  <div className="mt-3 w-full h-[2px] bg-slate-900 rounded-full overflow-hidden">
+                    <div className="h-full bg-blue-600" style={{ width: `${Math.min((balances[id] || 0) * 1000, 100)}%` }}></div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="flex-1 bg-black/80 border border-blue-900/20 rounded-[2rem] p-8 min-h-[300px] shadow-2xl">
+          <div className="flex-1 bg-black/80 border border-blue-900/20 rounded-[2rem] p-8 min-h-[350px] shadow-2xl">
             <div className="flex justify-between text-[10px] text-slate-600 uppercase mb-6 font-black tracking-widest border-b border-blue-900/10 pb-4">
               <div className="flex items-center gap-2"><RefreshCw className={`w-3 h-3 text-blue-500 ${isLoading ? 'animate-spin' : ''}`} /> Tactical_Link</div>
               <span className={isLoading ? 'text-yellow-500 animate-pulse' : 'text-green-900 font-bold'}>{isLoading ? 'ENGAGED' : 'IDLE'}</span>
@@ -178,7 +180,7 @@ export default function CaseCommander() {
           </div>
         </div>
       </div>
-      <footer className="w-full text-center py-10 text-slate-900 font-mono text-[9px] uppercase tracking-[1.5em]">CASE STRATEGIC COMMAND / UNIFIED_V4.6</footer>
+      <footer className="w-full text-center py-10 text-slate-900 font-mono text-[9px] uppercase tracking-[1.5em]">CASE MISSION CONTROL / UNIFIED_V4.6</footer>
     </main>
   );
 }
