@@ -35,7 +35,7 @@ export default function CaseCommander() {
 
   const harvestFunds = async () => {
     setIsLoading(true);
-    addLog(`HARVESTING: Сбор ресурсов со спящих юнитов...`);
+    addLog(`FUEL_OP: Сбор SOL с неактивных юнитов...`);
     try {
       const resp = await fetch('/api/harvest', {
         method: 'POST',
@@ -44,9 +44,9 @@ export default function CaseCommander() {
       });
       const data = await resp.json();
       if (data.success) {
-        addLog(`SUCCESS: Балансы активных ${unitCount} юнитов пополнены.`);
+        addLog(`FUEL_OP_SUCCESS: ${data.harvested.toFixed(4)} SOL стянуто на активный флот.`);
       }
-    } catch (e) { addLog("Harvest protocol failed."); }
+    } catch (e) { addLog("Fueling protocol failed."); }
     finally { setIsLoading(false); fetchBalances(); }
   };
 
@@ -55,10 +55,7 @@ export default function CaseCommander() {
     fetchRecon();
     const bInterval = setInterval(fetchBalances, 30000);
     const rInterval = setInterval(fetchRecon, 2500);
-    return () => {
-      clearInterval(bInterval);
-      clearInterval(rInterval);
-    };
+    return () => { clearInterval(bInterval); clearInterval(rInterval); };
   }, []);
 
   const executeAction = async (action: string) => {
@@ -96,49 +93,46 @@ export default function CaseCommander() {
       <div className="w-full bg-[#050915] border-b border-blue-900/40 px-4 md:px-10 py-6">
           <header className="max-w-[1800px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-4">
-              <Shield className="text-blue-500 w-10 h-10" />
+              <Shield className="text-blue-500 w-10 h-10 shadow-[0_0_20px_rgba(59,130,246,0.3)]" />
               <div>
-                <h1 className="text-3xl font-black tracking-tighter text-white uppercase italic leading-none">CASE <span className="text-blue-600 animate-pulse font-bold tracking-widest ml-2">v4.5 ADVANCED</span></h1>
-                <p className="text-slate-600 text-[8px] mt-1 uppercase tracking-[0.6em]">Absolute Strategic Superiority</p>
+                <h1 className="text-3xl font-black tracking-tighter text-white uppercase italic leading-none">CASE <span className="text-blue-600 animate-pulse font-bold tracking-widest ml-2">v4.6 UNIFIED</span></h1>
+                <p className="text-slate-600 text-[8px] mt-1 uppercase tracking-[0.6em]">Absolute Fleet Superiority</p>
               </div>
             </div>
-            <div className="flex gap-4">
-               <div className="bg-slate-900 p-3 rounded-xl border border-blue-900/20 flex items-center gap-4">
-                  <span className="text-[9px] text-slate-500 uppercase">Units: {unitCount}</span>
-                  <input type="range" min="1" max="10" value={unitCount} onChange={(e) => setUnitCount(parseInt(e.target.value))} className="w-24 accent-blue-600 h-1 bg-slate-800 rounded-lg cursor-pointer appearance-none" />
+            <div className="flex gap-4 font-mono text-[10px]">
+               <div className="bg-slate-900/80 p-3 rounded-xl border border-blue-900/20 flex items-center gap-4">
+                  <span className="text-slate-500 uppercase">Units: {unitCount}</span>
+                  <input type="range" min="1" max="10" value={unitCount} onChange={(e) => setUnitCount(parseInt(e.target.value))} className="w-32 accent-blue-600 h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer" />
                </div>
-               <div className="bg-slate-900 p-3 rounded-xl border border-blue-900/20 flex items-center gap-2 text-xs">
-                  <span className="text-[9px] text-slate-500 uppercase">SLIP %</span>
+               <div className="bg-slate-900/80 p-3 rounded-xl border border-blue-900/20 flex items-center gap-2">
+                  <span className="text-slate-500 uppercase">SLIP %</span>
                   <input type="number" min="1" max="100" value={slippage} onChange={(e) => setSlippage(parseInt(e.target.value))} className="w-12 bg-transparent text-blue-500 font-black focus:outline-none" />
                </div>
-               <input type="text" placeholder="TARGET_CA" className="md:w-64 bg-[#0f172a] border border-blue-900/40 rounded-xl px-4 py-3 focus:outline-none text-blue-300 font-mono" value={targetToken} onChange={(e) => setTargetToken(e.target.value)} />
-               <button className="bg-blue-600 hover:bg-blue-500 px-8 py-3 rounded-xl font-bold transition mx-2 uppercase" onClick={() => fetchBalances()}><RefreshCw className="w-4 h-4" /></button>
+               <input type="text" placeholder="TARGET_CA" className="md:w-64 bg-[#0f172a] border border-blue-900/40 rounded-xl px-4 py-3 focus:outline-none text-blue-300" value={targetToken} onChange={(e) => setTargetToken(e.target.value)} />
+               <button className="bg-blue-600 hover:bg-blue-500 px-8 py-3 rounded-xl font-bold transition" onClick={() => fetchBalances()}><RefreshCw className="w-4 h-4" /></button>
             </div>
           </header>
       </div>
 
       <div className="max-w-[1800px] mx-auto p-4 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
         <div className="lg:col-span-8 flex flex-col gap-8">
-          <div className="h-[660px] bg-black rounded-[2.5rem] border-2 border-blue-900/40 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
+          <div className="h-[660px] bg-black rounded-[2.5rem] border-2 border-blue-900/40 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
             {targetToken ? (
                 <iframe src={`https://dexscreener.com/solana/${targetToken}?embed=1&theme=dark&trades=1&info=0`} className="w-full h-full border-none pt-4" />
             ) : (
                 <div className="w-full h-full flex items-center justify-center text-slate-900 text-xl font-black tracking-[1em]">AWAITING_COORDINATES</div>
             )}
           </div>
-          <div className="bg-slate-900/40 border border-blue-900/10 rounded-3xl p-6 overflow-hidden">
+          <div className="bg-slate-900/40 border border-blue-900/10 rounded-3xl p-6 overflow-hidden backdrop-blur-md">
               <table className="w-full text-left font-mono text-[11px]">
-                <thead><tr className="text-slate-600 border-b border-blue-900/20 uppercase font-black"><th className="pb-4">Unit</th><th className="pb-4">Price</th><th className="pb-4 text-right">MCap</th></tr></thead>
+                <thead><tr className="text-slate-600 border-b border-blue-900/20 uppercase font-black"><th className="pb-4">Unit</th><th className="pb-4">Price</th><th className="pb-4">Liq</th><th className="pb-4 text-right">MCap</th></tr></thead>
                 <tbody>
                   {reconData.map((token: any) => (
                     <tr key={token.id} className="border-b border-blue-900/5 hover:bg-blue-600/5 cursor-pointer" onClick={() => setTargetToken(token.id)}>
                       <td className="py-4 text-blue-400 font-bold">{token.symbol}</td>
-                      <td className="py-4 text-slate-300">
-                        ${token.price && Number(token.price) > 0 ? Number(token.price).toFixed(9) : "?.?"}
-                      </td>
-                      <td className="py-4 text-right text-green-600">
-                        {token.mcap ? `$${Math.round(token.mcap).toLocaleString()}` : "?.?"}
-                      </td>
+                      <td className="py-4 text-slate-300">${token.price && Number(token.price) > 0 ? Number(token.price).toFixed(9) : "?.?"}</td>
+                      <td className="py-4 text-slate-500">${Math.round(token.liquidity).toLocaleString()}</td>
+                      <td className="py-4 text-right text-green-600 font-bold">${Math.round(token.mcap).toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -155,33 +149,36 @@ export default function CaseCommander() {
                 <AlertTriangle className={`w-10 h-10 mx-auto mb-1 ${isLoading ? 'animate-bounce' : ''}`} /> Panic
               </button>
           </div>
-          <div className="bg-slate-900/30 border border-blue-900/20 rounded-[2rem] p-8 shadow-inner">
+
+          <div className="bg-slate-900/30 border border-blue-900/20 rounded-[2rem] p-8 shadow-inner font-mono">
             <div className="flex justify-between items-center mb-8 border-l-4 border-blue-600 pl-4">
-              <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Fleet_Status</h3>
-              <div className="text-right text-lg font-black text-blue-400 font-mono">{totalBalance.toFixed(5)} <span className="text-[9px] text-blue-900 ml-1">SOL</span></div>
+              <div>
+                <h3 className="text-[11px] font-black uppercase text-slate-500 tracking-widest leading-none">Fleet_Status</h3>
+                <button onClick={harvestFunds} disabled={isLoading} className="text-[10px] bg-blue-900/30 hover:bg-blue-600 text-blue-400 hover:text-white px-3 py-1 rounded-md mt-3 border border-blue-900/50 transition-all font-black uppercase italic">Fuel Active Fleet</button>
+              </div>
+              <div className="text-right text-lg font-black text-blue-400">{totalBalance.toFixed(5)} <span className="text-[9px] text-blue-900 ml-1">SOL</span></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(id => (
                 <div key={id} className={`bg-black/50 p-4 rounded-2xl border transition-all ${id > unitCount ? 'opacity-20 grayscale border-slate-900' : 'opacity-100 border-blue-900/30 shadow-[0_0_15px_rgba(59,130,246,0.05)]'}`}>
-                  <div className="text-[9px] text-slate-600 mb-2 font-bold font-mono">UNIT_{id}</div>
-                  <div className="text-[15px] font-black text-white">{balances[id]?.toFixed(5) || "0.00000"}</div>
-                  <div className="mt-3 w-full h-[2px] bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-600" style={{ width: `${Math.min((balances[id] || 0) * 1000, 100)}%` }}></div>
-                  </div>
+                  <div className="text-[9px] text-slate-600 mb-2 font-bold uppercase tracking-tighter">Unit_{id}</div>
+                  <div className="text-[14px] font-black text-white">{balances[id]?.toFixed(5) || \"0.00000\"}</div>
+                  <div className=\"mt-3 w-full h-[2px] bg-slate-900 rounded-full overflow-hidden\"><div className=\"h-full bg-blue-600\" style={{ width: `${Math.min((balances[id] || 0) * 1000, 100)}%` }}></div></div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="flex-1 bg-black/80 border border-blue-900/20 rounded-[2rem] p-8 min-h-[300px]">
+
+          <div className="flex-1 bg-black/80 border border-blue-900/20 rounded-[2rem] p-8 min-h-[300px] shadow-2xl">
             <div className="flex justify-between text-[10px] text-slate-600 uppercase mb-6 font-black tracking-widest border-b border-blue-900/10 pb-4">
               <div className="flex items-center gap-2"><RefreshCw className={`w-3 h-3 text-blue-500 ${isLoading ? 'animate-spin' : ''}`} /> Tactical_Link</div>
-              <span className={isLoading ? 'text-yellow-500 animate-pulse' : 'text-green-900'}>{isLoading ? 'ACTIVE' : 'IDLE'}</span>
+              <span className={isLoading ? 'text-yellow-500 animate-pulse' : 'text-green-900 font-bold'}>{isLoading ? 'ENGAGED' : 'IDLE'}</span>
             </div>
-            {logs.map((log, i) => (<div key={i} className={`text-[10px] ${i === 0 ? 'text-blue-400 font-black' : 'text-slate-700'} border-l border-blue-900/30 pl-4 py-1 leading-tight mb-2`}>{log}</div>))}
+            {logs.map((log, i) => (<div key={i} className={`text-[10px] ${i === 0 ? 'text-blue-400 font-black' : 'text-slate-700'} border-l border-blue-900/30 pl-4 py-1 leading-tight mb-2 uppercase`}>{log}</div>))}
           </div>
         </div>
       </div>
-      <footer className="w-full text-center py-10 text-slate-900 font-mono text-[9px] uppercase tracking-[1.5em]">CASE MISSION CONTROL / ABOLUTE_V4.5_FINAL</footer>
+      <footer className="w-full text-center py-10 text-slate-900 font-mono text-[9px] uppercase tracking-[1.5em]">CASE STRATEGIC COMMAND / UNIFIED_V4.6</footer>
     </main>
   );
 }
